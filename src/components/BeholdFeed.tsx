@@ -3,7 +3,7 @@ import { useEffect } from "react";
 const SCRIPT_SRC = "https://w.behold.so/widget.js";
 const FEED_ID = "kZhFmOI1boWX9ex8i7Gj";
 
-declare global {
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
       "behold-widget": React.DetailedHTMLProps<
