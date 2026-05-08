@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProgramasRouteImport } from './routes/programas'
 import { Route as NoticiasRouteImport } from './routes/noticias'
+import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProgramasSlugRouteImport } from './routes/programas.$slug'
 
@@ -22,6 +23,11 @@ const ProgramasRoute = ProgramasRouteImport.update({
 const NoticiasRoute = NoticiasRouteImport.update({
   id: '/noticias',
   path: '/noticias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriaRoute = GaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,12 +43,14 @@ const ProgramasSlugRoute = ProgramasSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/galeria': typeof GaleriaRoute
   '/noticias': typeof NoticiasRoute
   '/programas': typeof ProgramasRouteWithChildren
   '/programas/$slug': typeof ProgramasSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/galeria': typeof GaleriaRoute
   '/noticias': typeof NoticiasRoute
   '/programas': typeof ProgramasRouteWithChildren
   '/programas/$slug': typeof ProgramasSlugRoute
@@ -50,20 +58,28 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/galeria': typeof GaleriaRoute
   '/noticias': typeof NoticiasRoute
   '/programas': typeof ProgramasRouteWithChildren
   '/programas/$slug': typeof ProgramasSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/noticias' | '/programas' | '/programas/$slug'
+  fullPaths: '/' | '/galeria' | '/noticias' | '/programas' | '/programas/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/noticias' | '/programas' | '/programas/$slug'
-  id: '__root__' | '/' | '/noticias' | '/programas' | '/programas/$slug'
+  to: '/' | '/galeria' | '/noticias' | '/programas' | '/programas/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/galeria'
+    | '/noticias'
+    | '/programas'
+    | '/programas/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GaleriaRoute: typeof GaleriaRoute
   NoticiasRoute: typeof NoticiasRoute
   ProgramasRoute: typeof ProgramasRouteWithChildren
 }
@@ -82,6 +98,13 @@ declare module '@tanstack/react-router' {
       path: '/noticias'
       fullPath: '/noticias'
       preLoaderRoute: typeof NoticiasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galeria': {
+      id: '/galeria'
+      path: '/galeria'
+      fullPath: '/galeria'
+      preLoaderRoute: typeof GaleriaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -115,6 +138,7 @@ const ProgramasRouteWithChildren = ProgramasRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GaleriaRoute: GaleriaRoute,
   NoticiasRoute: NoticiasRoute,
   ProgramasRoute: ProgramasRouteWithChildren,
 }
