@@ -49,7 +49,7 @@ const GALLERY_PLACEHOLDERS = [
 ];
 
 function Home() {
-  const { episodes, error } = Route.useLoaderData();
+  const { episodes, error } = Route.useLoaderData() as { episodes: Episode[]; error: string | null };
   const latest = episodes[0];
   const recent = episodes.slice(1, 9);
 
