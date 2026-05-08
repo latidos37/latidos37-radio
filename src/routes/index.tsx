@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getEpisodes } from "@/lib/ivoox.functions";
+import { getEpisodes, type Episode } from "@/lib/ivoox.functions";
 import { HeroPlayer } from "@/components/HeroPlayer";
 import { EpisodeCard } from "@/components/EpisodeCard";
 
