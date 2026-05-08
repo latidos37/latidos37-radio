@@ -18,17 +18,7 @@ const INSTAGRAM_URL = "https://www.instagram.com/latidos37/";
 // Get one free at https://behold.so (no API token, no Meta app required).
 const BEHOLD_FEED_ID = import.meta.env.VITE_BEHOLD_FEED_ID as string | undefined;
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace JSX {
-    interface IntrinsicElements {
-      "behold-widget": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & { "feed-id"?: string },
-        HTMLElement
-      >;
-    }
-  }
-}
+// (custom element typed via inline cast below to avoid JSX global edits)
 
 function useBeholdScript(enabled: boolean) {
   useEffect(() => {
@@ -106,7 +96,10 @@ function GaleriaPage() {
         {enabled ? (
           <div ref={ref} className="behold-wrap">
             {/* Behold renders the live Instagram grid here */}
-            <behold-widget feed-id={BEHOLD_FEED_ID} />
+            {(() => {
+              const Tag = "behold-widget" as unknown as "div";
+              return <Tag {...({ "feed-id": BEHOLD_FEED_ID } as React.HTMLAttributes<HTMLElement>)} />;
+            })()}
             <p className="mt-8 text-center text-xs font-mono uppercase tracking-widest text-cream/50">
               ★ Sincronizado automáticamente con @latidos37
             </p>
