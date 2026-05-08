@@ -78,22 +78,31 @@ export function parseFeed(xml: string): Episode[] {
   });
 }
 
-let cache: { at: number; data: Episode[] } | null = null;
+let cache: { at: number; data: Episode[]; bust: string } | null = null;
+const TTL_MS = 6 * 60 * 60 * 1000; // 6h auto-sync
+
+function bustImage(url: string, bust: string): string {
+  if (!url) return url;
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}v=${bust}`;
+}
 
 export const getEpisodes = createServerFn({ method: "GET" }).handler(async () => {
-  if (cache && Date.now() - cache.at < 5 * 60 * 1000) {
+  if (cache && Date.now() - cache.at < TTL_MS) {
     return { episodes: cache.data, error: null as string | null };
   }
   try {
     const res = await fetch(FEED_URL, {
-      headers: { "User-Agent": "Latidos37Web/1.0" },
+      headers: { "User-Agent": "Latidos37Web/1.0", "Cache-Control": "no-cache" },
+      cache: "no-store" as RequestCache,
     });
     if (!res.ok) {
       return { episodes: cache?.data ?? [], error: `Feed ${res.status}` };
     }
     const xml = await res.text();
-    const data = parseFeed(xml);
-    cache = { at: Date.now(), data };
+    const bust = String(Math.floor(Date.now() / TTL_MS));
+    const data = parseFeed(xml).map((e) => ({ ...e, image: bustImage(e.image, bust) }));
+    cache = { at: Date.now(), data, bust };
     return { episodes: data, error: null };
   } catch (e) {
     return { episodes: cache?.data ?? [], error: (e as Error).message };
